@@ -10,4 +10,8 @@ app.get("/", (req, res) => {
     return res.status(200).json({ message: "Working" });
 });
 
+app.use((req, res) => {
+    return res.status(404).json({ message: "Not found" });
+});
+
 export default app;
