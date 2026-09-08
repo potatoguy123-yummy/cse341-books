@@ -1,5 +1,5 @@
 import express from "express";
-import { getBooksHandler, getBookByIdHandler } from "./controllers/books.js";
+import { getBooksHandler, getBookByIdHandler, createBookHandler, updateBookHandler, deleteBookHandler } from "./controllers/books.js";
 import { createAuthorHandler, readAuthorHandler, readAuthorsHandler, updateAuthorHandler, deleteAuthorHandler } from "./controllers/authors.js";
 
 const router = express.Router();
@@ -26,8 +26,56 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Error"
+ *   post:
+ *     summary: Create a new book
+ *     tags:
+ *       - Books
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - authorId
+ *               - title
+ *               - publicationDate
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: b4
+ *               authorId:
+ *                 type: string
+ *                 example: a1
+ *               title:
+ *                 type: string
+ *                 example: Example Book Title
+ *               publicationDate:
+ *                 type: string
+ *                 example: "2026-01-15"
+ *     responses:
+ *       201:
+ *         description: Book created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Book"
+ *       400:
+ *         description: Required field missing, id already exists, or authorId does not match an existing author
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       500:
+ *         description: Unable to create book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  */
 router.get("/books", getBooksHandler);
+router.post("/books", createBookHandler);
 
 /**
  * @openapi
@@ -62,8 +110,92 @@ router.get("/books", getBooksHandler);
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Error"
+ *   put:
+ *     summary: Update an existing book
+ *     tags:
+ *       - Books
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The custom book id, such as b1
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - authorId
+ *               - title
+ *               - publicationDate
+ *             properties:
+ *               authorId:
+ *                 type: string
+ *                 example: a2
+ *               title:
+ *                 type: string
+ *                 example: Updated Book Title
+ *               publicationDate:
+ *                 type: string
+ *                 example: "2026-02-20"
+ *     responses:
+ *       200:
+ *         description: Book updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Book"
+ *       400:
+ *         description: Required field missing or authorId does not match an existing author
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       404:
+ *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       500:
+ *         description: Unable to update book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *   delete:
+ *     summary: Delete an existing book
+ *     tags:
+ *       - Books
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The custom book id, such as b1
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Book deleted successfully
+ *       404:
+ *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       500:
+ *         description: Unable to delete book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  */
 router.get("/books/:id", getBookByIdHandler);
+router.put("/books/:id", updateBookHandler);
+router.delete("/books/:id", deleteBookHandler);
 
 /**
  * @openapi
